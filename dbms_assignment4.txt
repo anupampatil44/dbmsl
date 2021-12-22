@@ -1,0 +1,60 @@
+CREATE PROCEDURE finecalculator(IN rno INT, IN Bname VARCHAR(30) )
+    -> BEGIN
+    -> DECLARE not_null INT DEFAULT 0;
+    -> proc_exit:
+    -> BEGIN
+    -> DECLARE i_date
+    -> DATE;
+    -> DECLARE diff INT;
+    -> DECLARE stat CHAR(1);
+    -> DECLARE TableNotFound condition for 1146;
+    -> declare exit handler for TableNotFound
+    -> select 'This record does not exist' message;
+    -> declare exit handler for not found
+    -> select 'this record does not exist' Message;
+    -> DECLARE EXIT HANDLER FOR 1048 SET not_null = 1;
+    -> SELECT DateOfIssue INTO i_date FROM Borrower
+    -> WHERE Roll_no = rno AND Book_Name = Bname;
+    -> SELECT book_status INTO stat FROM Borrower
+    -> WHERE Roll_no = rno AND Book_Name = Bname;
+    -> IF stat = 'R' THEN
+    -> SELECT 'Book Already Returned !!' AS MESSAGE;
+    -> LEAVE proc_exit;
+    -> ELSE
+    -> UPDATE Borrower
+    -> SET book_status = 'R'
+    -> WHERE Roll_no = rno AND Book_Name = Bname;
+    -> END IF;
+    -> SELECT datediff(curdate(), i_date) INTO diff;
+    -> IF(diff > 15 AND diff <= 30) THEN
+    -> INSERT INTO Fine VALUES(rno, curdate(), diff, (diff*5) );
+    -> ELSEIF (diff > 30) THEN
+    -> INSERT INTO Fine VALUES(rno, curdate(), diff, (diff*50) );
+    -> ELSE
+    -> INSERT INTO Fine VALUES(rno, curdate(), diff, 0);
+    -> END IF;
+    -> END;
+    -> IF not_null = 1 THEN
+    -> SELECT 'Unsuccessful Insert - NULL value' AS ERROR;
+    -> END IF;
+    -> END;
+
+
+
+for area calculation:
+
+create table areas ( r number(2), area number (14,2));
+declare
+r number(5);
+area number(14,2);
+pi constant number (4,2):=3.14;
+begin
+r:=5;
+while r<=9
+loop
+area:=pi*r*r;
+insert into areas values(r,area );
+r:=r+1;
+dbms_output.put_line('Area of circle with radius '|| r || 'is ' || area);
+end loop;
+end;

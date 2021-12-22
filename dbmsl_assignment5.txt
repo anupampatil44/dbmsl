@@ -1,0 +1,115 @@
+mysql> CREATE TABLE stud_marks(rollno int primary key, name varchar(20),totalmarks int);
+Query OK, 0 rows affected (0.59 sec)
+
+mysql> insert into stud_marks values(101,'anupam', 933);
+Query OK, 1 row affected (0.19 sec)
+
+mysql> insert into stud_marks values(101,'yash', 365);
+ERROR 1062 (23000): Duplicate entry '101' for key 'stud_marks.PRIMARY'
+mysql> insert into stud_marks values(102,'yash', 365);
+Query OK, 1 row affected (0.08 sec)
+
+mysql> insert into stud_marks values(103,'devansh', 1300);
+Query OK, 1 row affected (0.04 sec)
+
+mysql> insert into stud_marks values(104,'ved', 675);
+Query OK, 1 row affected (0.07 sec)
+
+mysql> select * from stud_marks;
++--------+---------+------------+
+| rollno | name    | totalmarks |
++--------+---------+------------+
+|    101 | anupam  |        933 |
+|    102 | yash    |        365 |
+|    103 | devansh |       1300 |
+|    104 | ved     |        675 |
++--------+---------+------------+
+4 rows in set (0.00 sec)
+
+create table result (roll_no int, name varchar(20), class char(20));
+
+
+mysql> create procedure proc_grade(in marks int, out class varchar(20))
+    -> begin
+    -> if marks<=1500 and marks>=990 then set class='DIST';
+    -> end if;
+    -> if marks<=989 and marks>=900 then set class='FIRST CLASS';
+    -> end if;
+    -> if marks<=899 and marks>=825 then set class='H.SECOND CLASS';
+    -> end if;
+    -> if marks<=824 and marks>=750 then set class='SECOND CLASS';
+    -> end if;
+    -> if marks<=749 and marks>=650 then set class='PASS';
+    -> end if;
+    -> if marks < 650 then set class='FAIL';
+    -> end if;
+    -> end;
+    -> //
+
+
+create function writetheresult(rno int) returns int
+    -> deterministic
+    -> begin
+    -> declare fmarks integer;
+    -> declare grade varchar(20);
+    -> declare stud_name varchar(20);
+    -> select stud_marks.name,stud_marks.totalmarks into stud_name,fmarks from stud_marks where stud_marks.rollno=rno;
+    -> call proc_grade(fmarks,@grade);
+    -> insert into result values(rno,stud_name,@grade);
+    -> return rno;
+    -> end;
+    -> //
+
+
+mysql> select writetheresult(101);
++---------------------+
+| writetheresult(101) |
++---------------------+
+|                 101 |
++---------------------+
+1 row in set (0.48 sec)
+
+mysql> select writetheresult(102);
++---------------------+
+| writetheresult(102) |
++---------------------+
+|                 102 |
++---------------------+
+1 row in set (0.48 sec)
+
+mysql> select writetheresult(103);
++---------------------+
+| writetheresult(103) |
++---------------------+
+|                 103 |
++---------------------+
+1 row in set (0.48 sec)
+
+mysql> select writetheresult(104);
++---------------------+
+| writetheresult(104) |
++---------------------+
+|                 104 |
++---------------------+
+1 row in set (0.48 sec)
+
+mysql> select writetheresult(105);
++---------------------+
+| writetheresult(105) |
++---------------------+
+|                 101 |
++---------------------+
+1 row in set (0.48 sec)
+
+
+mysql> select * from result;
++---------+---------+-------------+
+| roll_no | name    | class       |
++---------+---------+-------------+
+|     101 | anupam  | FIRST CLASS |
+|     102 | yash    | FAIL        |
+|     103 | devansh | DIST        |
+|     104 | ved     | PASS        |
+|     105 | NULL    | NULL        |
++---------+---------+-------------+
+

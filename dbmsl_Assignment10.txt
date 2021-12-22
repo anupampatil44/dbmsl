@@ -1,0 +1,195 @@
+> use assnb2
+
+//inserting data:
+>db.student.insert({'roll_no':1,'name':'Anupam','branch':'Computer','cgpa':9.625})
+> db.student.insert({'roll_no':2,'name':'Devansh','branch':'Computer','cgpa':9.95})
+WriteResult({ "nInserted" : 1 })
+> db.student.insert({'roll_no':1,'name':'Megha','branch':'IT','cgpa':9.2})
+WriteResult({ "nInserted" : 1 })
+> db.student.insert({'roll_no':1,'name':'Megha','branch':'EnTC','cgpa':9.45})
+WriteResult({ "nInserted" : 1 })
+> db.student.insert({'roll_no':1,'name':'Anupam','branch':'EnTC','cgpa':9.88})
+WriteResult({ "nInserted" : 1 })
+> db.student.insert({'roll_no':1,'name':'Devansh','branch':'IT','cgpa':9.12})
+WriteResult({ "nInserted" : 1 })
+
+//display data
+db.student.find().pretty()
+{
+	"_id" : ObjectId("618e0600347f8f22c6b9c26e"),
+	"roll_no" : 1,
+	"name" : "Anupam",
+	"branch" : "Computer",
+	"cgpa" : 9.625
+}
+{
+	"_id" : ObjectId("618e0630347f8f22c6b9c26f"),
+	"roll_no" : 2,
+	"name" : "Devansh",
+	"branch" : "Computer",
+	"cgpa" : 9.95
+}
+{
+	"_id" : ObjectId("618e064c347f8f22c6b9c270"),
+	"roll_no" : 1,
+	"name" : "Megha",
+	"branch" : "IT",
+	"cgpa" : 9.2
+}
+{
+	"_id" : ObjectId("618e0967347f8f22c6b9c271"),
+	"roll_no" : 1,
+	"name" : "Megha",
+	"branch" : "EnTC",
+	"cgpa" : 9.45
+}
+{
+	"_id" : ObjectId("618e0973347f8f22c6b9c272"),
+	"roll_no" : 1,
+	"name" : "Anupam",
+	"branch" : "EnTC",
+	"cgpa" : 9.88
+}
+{
+	"_id" : ObjectId("618e0983347f8f22c6b9c273"),
+	"roll_no" : 1,
+	"name" : "Devansh",
+	"branch" : "IT",
+	"cgpa" : 9.12
+}
+
+
+//Aggregates:
+
+//sum
+ db.student.aggregate({$group:{_id:"$name","total":{$sum:"$cgpa"}}})
+{ "_id" : "Devansh", "total" : 19.07 }
+{ "_id" : "Anupam", "total" : 19.505000000000003 }
+{ "_id" : "Megha", "total" : 18.65 }
+
+//avg
+> db.student.aggregate({$group:{_id:"$name","total":{$avg:"$cgpa"}}})
+{ "_id" : "Anupam", "total" : 9.752500000000001 }
+{ "_id" : "Devansh", "total" : 9.535 }
+{ "_id" : "Megha", "total" : 9.325 }
+
+//avg
+> db.student.aggregate({$group:{_id:"$branch","total":{$avg:"$cgpa"}}})
+{ "_id" : "IT", "total" : 9.16 }
+{ "_id" : "EnTC", "total" : 9.665 }
+{ "_id" : "Computer", "total" : 9.7875 }
+
+//min
+> db.student.aggregate({$group:{_id:"$branch","total":{$min:"$cgpa"}}})
+{ "_id" : "EnTC", "total" : 9.45 }
+{ "_id" : "Computer", "total" : 9.625 }
+{ "_id" : "IT", "total" : 9.12 }
+
+
+//max
+> db.student.aggregate({$group:{_id:"$name","total":{$max:"$cgpa"}}})
+{ "_id" : "Megha", "total" : 9.45 }
+{ "_id" : "Anupam", "total" : 9.88 }
+{ "_id" : "Devansh", "total" : 9.95 }
+
+//first
+> db.student.aggregate({$group:{_id:"$name","total":{$first:"$cgpa"}}})
+{ "_id" : "Anupam", "total" : 9.625 }
+{ "_id" : "Devansh", "total" : 9.95 }
+{ "_id" : "Megha", "total" : 9.2 }
+
+//last
+> db.student.aggregate({$group:{_id:"$name","total":{$last:"$cgpa"}}})
+{ "_id" : "Anupam", "total" : 9.88 }
+{ "_id" : "Devansh", "total" : 9.12 }
+{ "_id" : "Megha", "total" : 9.45 }
+
+//push
+> db.student.aggregate({$group:{_id:"$name","total":{$push:"$cgpa"}}})
+{ "_id" : "Anupam", "total" : [ 9.625, 9.88 ] }
+{ "_id" : "Devansh", "total" : [ 9.95, 9.12 ] }
+{ "_id" : "Megha", "total" : [ 9.2, 9.45 ] }
+
+
+//index creation-
+
+> db.student.createIndex({'name':1})
+{
+	"numIndexesBefore" : 1,
+	"numIndexesAfter" : 2,
+	"createdCollectionAutomatically" : false,
+	"ok" : 1
+}
+
+//get indexes method:
+> db.student.getIndexes()
+[
+	{
+		"v" : 2,
+		"key" : {
+			"_id" : 1
+		},
+		"name" : "_id_"
+	},
+	{
+		"v" : 2,
+		"key" : {
+			"name" : 1
+		},
+		"name" : "name_1"
+	}
+]
+
+> db.student.createIndex({'name':-1})
+{
+	"numIndexesBefore" : 2,
+	"numIndexesAfter" : 3,
+	"createdCollectionAutomatically" : false,
+	"ok" : 1
+}
+> db.student.getIndexes()
+[
+	{
+		"v" : 2,
+		"key" : {
+			"_id" : 1
+		},
+		"name" : "_id_"
+	},
+	{
+		"v" : 2,
+		"key" : {
+			"name" : 1
+		},
+		"name" : "name_1"
+	},
+	{
+		"v" : 2,
+		"key" : {
+			"name" : -1
+		},
+		"name" : "name_-1"
+	}
+]
+
+> db.student.dropIndex({'name':-1})
+{ "nIndexesWas" : 3, "ok" : 1 }
+
+> db.student.getIndexes()
+[
+	{
+		"v" : 2,
+		"key" : {
+			"_id" : 1
+		},
+		"name" : "_id_"
+	},
+	{
+		"v" : 2,
+		"key" : {
+			"name" : 1
+		},
+		"name" : "name_1"
+	}
+]
+

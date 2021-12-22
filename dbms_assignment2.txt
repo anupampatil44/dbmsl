@@ -1,0 +1,26 @@
+INSERT INTO Customer VALUES (1,'anupam','patil','msi','kothrud','Pune',9999999999), (2,'aditya','wanjale','Google','Dhankawadi','Pune',9999999999), (3,'Yash','Pawar','Facebook','Central Perk','Nagpur',9999999999), (4,'Tanmay','Pardeshi','Apple','Central Perk','Pune',9999999999), (5,'Jake','Peralta','B99','Brooklyn','New York',9999999999), (6,'Amy','Saintiago','B99','Brooklyn','New York',9999999999), (7,'Darshan','Bari','Google','California','US',9999999999), (8,'Aabha','Pingle','Amazon','Sydney','Australia',9999999999), (10,'Vaishnavi','Patange','Netflix','Sydney','Australia',9999999999),;
+
+
+
+SELECT * FROM Customer WHERE cust_fname LIKE 'P%'OR cust_fname LIKE 'H%' AND (city='Mumbai' OR city='Pune');
+
+SELECT DISTINCT(city) FROM Customer;
+
+UPDATE books SET UNIT_PRICE=UNIT_PRICE*1.05 WHERE pub_year=2015;
+
+DELETE FROM Customer WHERE city='Pune';
+
+SELECT author_name FROM authors WHERE country='India' 
+UNION ALL 
+SELECT author_name FROM authors WHERE country='Australia';
+
+SELECT a.publisher_name FROM publisher a WHERE a.year =2015 AND a.publisher_name IN (SELECT b.publisher_name FROM publisher b WHERE b.year =2016);
+
+SELECT MAX(UNIT_PRICE) FROM books;
+SELECT * FROM books WHERE UNIT_PRICE BETWEEN 30 AND 40;
+
+SELECT * FROM books ORDER BY pub_year DESC;
+
+SELECT title,author_no,publisher_no FROM books WHERE pub_year IN (2000,2004,2006);
+
+SELECT * FROM books bk JOIN authors ar ON (bk.author_no=ar.author_no);

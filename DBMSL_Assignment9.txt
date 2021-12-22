@@ -1,0 +1,172 @@
+//insertion:
+
+> db.students.insert({"stud_id":1,"name":"Anupam Patil","Email":"","UG_Dept":"Computer Engineering","UG Batch":"2023","PG Course Name":"AI/ML","PG University":"Stanford","PG Batch":"2025"})
+WriteResult({ "nInserted" : 1 })
+
+> db.students.insert({"stud_id":3,"name":"Devansh Mundada","Email":"dvm@gmail.com","UG_Dept":"Computer Engineering","UG Batch":"2023","PG Course Name":"MBA","PG University":"Harvard","PG Batch":"2025"})
+WriteResult({ "nInserted" : 1 })
+
+> db.students.insert({"stud_id":2,"name":"Mehul Patil","Email":"mp@gmail.com","UG_Dept":"Computer Engineering","UG Batch":"2023","PG Course Name":"Computers","PG University":"Stanford","PG Batch":"2025"})
+
+WriteResult({ "nInserted" : 1 })
+
+
+//Update a document:
+> db.students.update({"stud_id":2},{$set:{"Email":"mehulrpatil@gmail.com"}})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+
+
+// reading data:
+> db.students.find().pretty();
+{
+	"_id" : ObjectId("618b55eecf45f54ffed52458"),
+	"stud_id" : 1,
+	"name" : "Anupam Patil",
+	"Email" : "",
+	"UG_Dept" : "Computer Engineering",
+	"UG Batch" : "2023",
+	"PG Course Name" : "AI/ML",
+	"PG University" : "Stanford",
+	"PG Batch" : "2025"
+}
+{
+	"_id" : ObjectId("618b562ccf45f54ffed52459"),
+	"stud_id" : 3,
+	"name" : "Devansh Mundada",
+	"Email" : "dvm@gmail.com",
+	"UG_Dept" : "Computer Engineering",
+	"UG Batch" : "2023",
+	"PG Course Name" : "MBA",
+	"PG University" : "Harvard",
+	"PG Batch" : "2025"
+}
+{
+	"_id" : ObjectId("618b594dcf45f54ffed5245a"),
+	"stud_id" : 2,
+	"name" : "Mehul Patil",
+	"Email" : "mehulrpatil@gmail.com",
+	"UG_Dept" : "Computer Engineering",
+	"UG Batch" : "2023",
+	"PG Course Name" : "Computers",
+	"PG University" : "Stanford",
+	"PG Batch" : "2025"
+}
+
+
+//using logical operators:
+
+//and operator-
+> db.students.find({$and:[{"PG University":"Stanford"},{"PG Course Name":"AI/ML"}]},{"_id":0,"name":1});
+{ "name" : "Anupam Patil" }
+
+//or operator-
+> db.students.find({$or:[{"stud_id":2},{"stud_id":3}]},{"_id":0,"name":1});
+{ "name" : "Devansh Mundada" }
+{ "name" : "Mehul Patil" }
+
+
+// Conditional Deletion of a document:
+> db.students.deleteOne({"PG Course Name":"MBA"})
+{ "acknowledged" : true, "deletedCount" : 1 }
+> db.students.find().pretty();
+{
+	"_id" : ObjectId("618b55eecf45f54ffed52458"),
+	"stud_id" : 1,
+	"name" : "Anupam Patil",
+	"Email" : "",
+	"UG_Dept" : "Computer Engineering",
+	"UG Batch" : "2023",
+	"PG Course Name" : "AI/ML",
+	"PG University" : "Stanford",
+	"PG Batch" : "2025"
+}
+{
+	"_id" : ObjectId("618b594dcf45f54ffed5245a"),
+	"stud_id" : 2,
+	"name" : "Mehul Patil",
+	"Email" : "mehulrpatil@gmail.com",
+	"UG_Dept" : "Computer Engineering",
+	"UG Batch" : "2023",
+	"PG Course Name" : "Computers",
+	"PG University" : "Stanford",
+	"PG Batch" : "2025"
+}
+
+//Updating with upsert as true:
+
+> db.students.update({"stud_id":3},{"name":"Devansh Mundada"},{upsert:true})
+WriteResult({
+	"nMatched" : 0,
+	"nUpserted" : 1,
+	"nModified" : 0,
+	"_id" : ObjectId("618bb72b4564c6d9d9487cb3")
+})
+> db.students.find().pretty();
+{
+	"_id" : ObjectId("618b55eecf45f54ffed52458"),
+	"stud_id" : 1,
+	"name" : "Anupam Patil",
+	"Email" : "",
+	"UG_Dept" : "Computer Engineering",
+	"UG Batch" : "2023",
+	"PG Course Name" : "AI/ML",
+	"PG University" : "Stanford",
+	"PG Batch" : "2025"
+}
+{
+	"_id" : ObjectId("618b594dcf45f54ffed5245a"),
+	"stud_id" : 2,
+	"name" : "Mehul Patil",
+	"Email" : "mehulrpatil@gmail.com",
+	"UG_Dept" : "Computer Engineering",
+	"UG Batch" : "2023",
+	"PG Course Name" : "Computers",
+	"PG University" : "Stanford",
+	"PG Batch" : "2025"
+}
+{ "_id" : ObjectId("618bb72b4564c6d9d9487cb3"), "name" : "Devansh Mundada" }
+
+
+//using save method:
+
+> db.students.save({"stud_id":3,"name":"Devansh Mundada","Email":"dev@gmail.com","UG_Dept":"Computer Engineering","UG Batch":"2023","PG Course Name":"Product Management","PG University" : "Stanford","PG Batch":"2025"})
+WriteResult({ "nInserted" : 1 })
+
+> db.students.find().pretty();
+{
+	"_id" : ObjectId("618b55eecf45f54ffed52458"),
+	"stud_id" : 1,
+	"name" : "Anupam Patil",
+	"Email" : "",
+	"UG_Dept" : "Computer Engineering",
+	"UG Batch" : "2023",
+	"PG Course Name" : "AI/ML",
+	"PG University" : "Stanford",
+	"PG Batch" : "2025"
+}
+{
+	"_id" : ObjectId("618b594dcf45f54ffed5245a"),
+	"stud_id" : 2,
+	"name" : "Mehul Patil",
+	"Email" : "mehulrpatil@gmail.com",
+	"UG_Dept" : "Computer Engineering",
+	"UG Batch" : "2023",
+	"PG Course Name" : "Computers",
+	"PG University" : "Stanford",
+	"PG Batch" : "2025"
+}
+{ "_id" : ObjectId("618bb72b4564c6d9d9487cb3"), "name" : "Devansh Mundada" }
+{
+	"_id" : ObjectId("618bc54e82d34bbf9cdfd06a"),
+	"stud_id" : 3,
+	"name" : "Devansh Mundada",
+	"Email" : "dev@gmail.com",
+	"UG_Dept" : "Computer Engineering",
+	"UG Batch" : "2023",
+	"PG Course Name" : "Product Management",
+	"PG University" : "Stanford",
+	"PG Batch" : "2025"
+}
+
+
+

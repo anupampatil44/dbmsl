@@ -1,0 +1,130 @@
+//Problem Statement: Implement Map reduces operation with suitable example using MongoDB.
+
+
+> use mapreduce_assignment
+switched to db mapreduce_assignment
+> db.createCollection("Inventory")
+{ "ok" : 1 }
+
+//Inserting Data:
+
+
+> db.Inventory.insert({_id:1,productid:100,name:"Nike Air-Jordan Collection",units:720,price:5000})
+WriteResult({ "nInserted" : 1 })
+> db.Inventory.insert({_id:2,productid:100,name:"Nvidia 3090Ti",units:500,price:2500})
+WriteResult({ "nInserted" : 1 })
+> db.Inventory.insert({_id:3,productid:102,name:"Armani Hoodie- Red",units:75,price:1500})
+WriteResult({ "nInserted" : 1 })
+> db.Inventory.insert({_id:4,productid:103,name:"Canon Pixshot DSLR",units:250,price:7500})
+WriteResult({ "nInserted" : 1 })
+> db.Inventory.insert({_id:5,productid:104,name:"Xbox Series X",units:200,price:1100})
+WriteResult({ "nInserted" : 1 })
+> db.Inventory.insert({_id:6,productid:105,name:"PS5",units:100,price:1300})
+WriteResult({ "nInserted" : 1 })
+> db.Inventory.insert({_id:7,productid:106,name:"Apple Macbook Pro M1X",units:1000,price:12000})
+WriteResult({ "nInserted" : 1 })
+> db.Inventory.insert({_id:8,productid:108,name:"Xiaomi Mi 15",units:1400,price:400})
+WriteResult({ "nInserted" : 1 })
+> db.Inventory.insert({_id:9,productid:108,name:"Jovan Musk Deoderant",units:2000,price:40})
+WriteResult({ "nInserted" : 1 })
+> db.Inventory.insert({_id:10,productid:109,name:"Levi's Jeans",units:500,price:800})
+WriteResult({ "nInserted" : 1 })
+
+
+> db.Inventory.find().pretty()
+{
+	"_id" : 1,
+	"productid" : 100,
+	"name" : "Nike Air-Jordan Collection",
+	"units" : 720,
+	"price" : 5000
+}
+{
+	"_id" : 2,
+	"productid" : 100,
+	"name" : "Nvidia 3090Ti",
+	"units" : 500,
+	"price" : 2500
+}
+{
+	"_id" : 3,
+	"productid" : 102,
+	"name" : "Armani Hoodie- Red",
+	"units" : 75,
+	"price" : 1500
+}
+{
+	"_id" : 4,
+	"productid" : 103,
+	"name" : "Canon Pixshot DSLR",
+	"units" : 250,
+	"price" : 7500
+}
+{
+	"_id" : 5,
+	"productid" : 104,
+	"name" : "Xbox Series X",
+	"units" : 200,
+	"price" : 1100
+}
+{
+	"_id" : 6,
+	"productid" : 105,
+	"name" : "PS5",
+	"units" : 100,
+	"price" : 1300
+}
+{
+	"_id" : 7,
+	"productid" : 106,
+	"name" : "Apple Macbook Pro M1X",
+	"units" : 1000,
+	"price" : 12000
+}
+{
+	"_id" : 8,
+	"productid" : 108,
+	"name" : "Xiaomi Mi 15",
+	"units" : 1400,
+	"price" : 400
+}
+{
+	"_id" : 9,
+	"productid" : 108,
+	"name" : "Jovan Musk Deoderant",
+	"units" : 2000,
+	"price" : 40
+}
+{
+	"_id" : 10,
+	"productid" : 109,
+	"name" : "Levi's Jeans",
+	"units" : 500,
+	"price" : 800
+}
+
+//Function Maps:
+> var funmap=function(){emit(this.productid,this.price);}
+
+> var funcReduce=function(keyid,prices){return Array.sum(prices);}
+> db.Inventory.mapReduce(funmap,funcReduce,{out:"Result"})
+{ "result" : "Result", "ok" : 1 }
+> db.Result.find()
+> db.Result.find()
+{ "_id" : 103, "value" : 7500 }
+{ "_id" : 105, "value" : 1300 }
+{ "_id" : 108, "value" : 440 }
+{ "_id" : 106, "value" : 12000 }
+{ "_id" : 104, "value" : 1100 }
+{ "_id" : 109, "value" : 800 }
+{ "_id" : 102, "value" : 1500 }
+{ "_id" : 100, "value" : 7500 }
+
+
+
+> db.Inventory.mapReduce(function(){ emit(this.productid,this.units);},function(key,value){ return Array.avg(value);},{query:{productid:{$gt:105}},out:"result_2"})
+{ "result" : "result_2", "ok" : 1 }
+> db.result_2.find()
+{ "_id" : 108, "value" : 1700 }
+{ "_id" : 106, "value" : 1000 }
+{ "_id" : 109, "value" : 500 }

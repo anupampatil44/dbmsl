@@ -1,0 +1,77 @@
+SELECT * FROM Professors NATURAL JOIN Departments;
++---------+---------+------------+------------+------------------+----------+------------+------------------+------------+--------+-----------+
+| dept_id | prof_id | prof_fname | prof_lname | designation      | salary   | doj        | email            | phone      | city   | dept_name |
++---------+---------+------------+------------+------------------+----------+------------+------------------+------------+--------+-----------+
+|       1 |       1 | Lisa       | Su         | Senior head      | 10000000 | 2020-08-20 | sulisa@gmail.com | 9999999999 | Austin | Computer  |
+|       2 |       2 | Tim        | Cook       | Junior Professor | 1000000  | 2021-08-20 | tc@gmail.com     | 9999999999 | Austin | IT        |
++---------+---------+------------+------------+------------------+----------+------------+------------------+------------+--------+-----------+
+
+
+
+SELECT Professors.prof_id,prof_fname,prof_lname,shift FROM Professors INNER JOIN Shift ON Professors.prof_id=Shift.prof_id;
++---------+------------+------------+-------+
+| prof_id | prof_fname | prof_lname | shift |
++---------+------------+------------+-------+
+|       1 | Lisa       | Su         |     1 |
+|       2 | Tim        | Cook       |     2 |
++---------+------------+------------+-------+
+
+SELECT Departments.dept_id,dept_name,prof_fname,prof_lname FROM Departments LEFT JOIN Professors ON Professors.dept_id=Departments.dept_id;
++---------+------------+------------+------------+
+| dept_id | dept_name  | prof_fname | prof_lname |
++---------+------------+------------+------------+
+|       1 | Computer   | Lisa       | Su         |
+|       2 | IT         | Tim        | Cook       |
+|       3 | Mechanical | Robert     | Herjavec   |
+|       3 | Mechanical | Robert     | James      |
++---------+------------+------------+------------+
+
+SELECT prof_fname,prof_lname,dept_name FROM Professors RIGHT JOIN Departments ON Professors.dept_id=Departments.dept_id;
++------------+------------+------------+
+| prof_fname | prof_lname | dept_name  |
++------------+------------+------------+
+| Lisa       | Su         | Computer   |
+| Tim        | Cook       | IT         |
+| Robert     | Herjavec   | Mechanical |
+| Robert     | James      | Mechanical |
++------------+------------+------------+
+
+SELECT prof_fname,prof_lname,dept_name,shift,salary FROM Professors pf,Departments dp,Shift s WHERE pf.prof_id=s.prof_id AND pf.dept_id=dp.dept_id AND pf.prof_id=101; 
++------------+------------+------------+-------+---------+
+| prof_fname | prof_lname | dept_name  | shift | salary  |
++------------+------------+------------+-------+---------+
+| Robert     | Herjavec   | Mechanical |     1 | 1200000 |
++------------+------------+------------+-------+---------+
+
+
+SELECT COUNT(*) AS count, dept_name FROM Departments INNER JOIN Professors on Professors.dept_id=Departments.dept_id GROUP BY Departments.dept_name;
++-------+------------+
+| count | dept_name  |
++-------+------------+
+|     1 | Computer   |
+|     1 | IT         |
+|     2 | Mechanical |
++-------+------------+
+
+SELECT prof_id,prof_fname,prof_lname from Professors WHERE dept_id=(SELECT dept_id FROM Departments WHERE dept_name='Computer');
+
++---------+------------+------------+
+| prof_id | prof_fname | prof_lname |
++---------+------------+------------+
+|       1 | Lisa       | Su         |
++---------+------------+------------+
+
+
+SELECT DISTINCT(dept_name) FROM Departments NATURAL JOIN Professors WHERE YEAR(doj)='2015';
++------------+
+| dept_name  |
++------------+
+| Mechanical |
++------------+
+1 row in set (0.00 sec)
+
+
+
+
+
+

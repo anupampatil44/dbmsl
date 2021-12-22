@@ -1,0 +1,109 @@
+mysql> select * from library;
++----+-------------+--------+------------+
+| id | name        | status | issuedate  |
++----+-------------+--------+------------+
+|  1 | Get Rich    | R      | 2021-09-02 |
+|  2 | Coding Help | I      | 2021-09-30 |
+|  3 | The Martian | R      | NULL       |
++----+-------------+--------+------------+
+3 rows in set (0.00 sec)
+
+mysql> create trigger delete_insert before delete on library for each row
+    -> begin
+    -> insert into audit values(old.id,old.name,curdate(),"Before Delete");
+    -> end;
+    -> //
+Query OK, 0 rows affected (0.18 sec)
+
+mysql> create trigger before_update before update on library for each row
+    -> begin
+    -> insert into audit values(old.id,old.name,curdate(),"Before Update");
+    -> end;
+    -> //
+Query OK, 0 rows affected (0.24 sec)
+
+mysql> create trigger after_update after update on library for each row
+    -> begin
+    -> insert into audit values(new.id,new.name,curdate(),"After Update");
+    -> end;
+    -> //
+Query OK, 0 rows affected (0.20 sec)
+
+mysql> create trigger after_insert after insert on library for each row
+    -> begin
+    -> insert into audit values(new.id,new.name,curdate(),"After Insert");
+    -> end;
+    -> //
+Query OK, 0 rows affected (0.10 sec)
+
+mysql> select * from audit;
+Empty set (0.00 sec)
+
+mysql> update library set status="I" where id=3;
+Query OK, 1 row affected (0.10 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> select * from audit;
++----+-------------+------------+---------------+
+| id | name        | dateinfo   | TypeofTrigger |
++----+-------------+------------+---------------+
+|  3 | The Martian | 2021-10-02 | Before Update |
+|  3 | The Martian | 2021-10-02 | After Update  |
++----+-------------+------------+---------------+
+2 rows in set (0.00 sec)
+
+mysql> update library set status="I" where id=1;
+Query OK, 1 row affected (0.06 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> select * from audit;
++----+-------------+------------+---------------+
+| id | name        | dateinfo   | TypeofTrigger |
++----+-------------+------------+---------------+
+|  3 | The Martian | 2021-10-02 | Before Update |
+|  3 | The Martian | 2021-10-02 | After Update  |
+|  1 | Get Rich    | 2021-10-02 | Before Update |
+|  1 | Get Rich    | 2021-10-02 | After Update  |
++----+-------------+------------+---------------+
+
+mysql> insert into library values(4,"The Secret","I","2021-08-22");
+Query OK, 1 row affected (0.07 sec)
+
+mysql> select * from audit;
++----+-------------+------------+---------------+
+| id | name        | dateinfo   | TypeofTrigger |
++----+-------------+------------+---------------+
+|  3 | The Martian | 2021-10-02 | Before Update |
+|  3 | The Martian | 2021-10-02 | After Update  |
+|  1 | Get Rich    | 2021-10-02 | Before Update |
+|  1 | Get Rich    | 2021-10-02 | After Update  |
+|  4 | The Secret  | 2021-10-02 | After Insert  |
++----+-------------+------------+---------------+
+5 rows in set (0.00 sec)
+
+mysql> delete from library where id=3;
+Query OK, 1 row affected (0.09 sec)
+
+mysql> select * from audit;
++----+-------------+------------+---------------+
+| id | name        | dateinfo   | TypeofTrigger |
++----+-------------+------------+---------------+
+|  3 | The Martian | 2021-10-02 | Before Update |
+|  3 | The Martian | 2021-10-02 | After Update  |
+|  1 | Get Rich    | 2021-10-02 | Before Update |
+|  1 | Get Rich    | 2021-10-02 | After Update  |
+|  4 | The Secret  | 2021-10-02 | After Insert  |
+|  3 | The Martian | 2021-10-02 | Before Delete |
++----+-------------+------------+---------------+
+6 rows in set (0.00 sec)
+
+mysql> select * from library;
++----+-------------+--------+------------+
+| id | name        | status | issuedate  |
++----+-------------+--------+------------+
+|  1 | Get Rich    | I      | 2021-09-02 |
+|  2 | Coding Help | I      | 2021-09-30 |
+|  4 | The Secret  | I      | 2021-08-22 |
++----+-------------+--------+------------+
+3 rows in set (0.00 sec)
+
